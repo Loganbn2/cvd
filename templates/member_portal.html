@@ -139,7 +139,10 @@
           document.getElementById('signout-btn').style.display = 'none';
         } else {
           document.getElementById('signout-btn').style.display = 'block';
-          window.location.href = 'https://cvd-9ptc.onrender.com/';
+          document.getElementById('auth-section').style.display = 'none';
+          document.getElementById('signup-section').style.display = 'none';
+          document.getElementById('portal-section').style.display = 'grid';
+          loadUserDetails(session.user);
         }
       }
 
@@ -151,7 +154,7 @@
         const msg = error ? error.message : '';
         document.getElementById('login-message').textContent = msg;
         if (!error) {
-          window.location.href = 'https://cvd-9ptc.onrender.com/';
+          checkAuth();
         }
       });
 
@@ -176,9 +179,13 @@
       supabase.auth.onAuthStateChange((_event, session) => {
         if (session) {
           document.getElementById('signout-btn').style.display = 'block';
-          window.location.href = 'https://cvd-9ptc.onrender.com/';
+          document.getElementById('auth-section').style.display = 'none';
+          document.getElementById('signup-section').style.display = 'none';
+          document.getElementById('portal-section').style.display = 'grid';
+          loadUserDetails(session.user);
         } else {
           document.getElementById('signout-btn').style.display = 'none';
+          document.getElementById('portal-section').style.display = 'none';
         }
       });
 
