@@ -78,6 +78,9 @@
                 <span>Don't have an account?</span>
                 <button id="show-signup" style="background: none; color: #4F8EF7; border: none; font-weight: 600; cursor: pointer; text-decoration: underline;">Create Account</button>
             </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <button id="forgot-password-btn" style="background: none; color: #4F8EF7; border: none; font-weight: 600; cursor: pointer; text-decoration: underline;">Forgot Password?</button>
+            </div>
         </div>
     </div>
     <div id="signup-section" style="width: 100%; max-width: 400px; margin: 0 auto; display: none;">
@@ -221,6 +224,52 @@
         document.getElementById('user-type').textContent = data.membership_type || '';
         document.getElementById('user-anniversary').textContent = data.membership_anniversary || '';
         document.getElementById('user-rollover').textContent = data.points_rollover_date || '';
+      }
+
+      // Forgot Password Modal
+      const forgotPasswordBtn = document.getElementById('forgot-password-btn');
+      let forgotPasswordModal = null;
+      if (forgotPasswordBtn) {
+        forgotPasswordBtn.onclick = function() {
+          if (!forgotPasswordModal) {
+            forgotPasswordModal = document.createElement('div');
+            forgotPasswordModal.id = 'forgot-password-modal';
+            forgotPasswordModal.style.position = 'fixed';
+            forgotPasswordModal.style.top = '0';
+            forgotPasswordModal.style.left = '0';
+            forgotPasswordModal.style.width = '100vw';
+            forgotPasswordModal.style.height = '100vh';
+            forgotPasswordModal.style.background = 'rgba(0,0,0,0.2)';
+            forgotPasswordModal.style.display = 'flex';
+            forgotPasswordModal.style.alignItems = 'center';
+            forgotPasswordModal.style.justifyContent = 'center';
+            forgotPasswordModal.style.zIndex = '2000';
+            forgotPasswordModal.innerHTML = `
+              <div style="background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.10); padding: 32px; max-width: 400px; width: 100%;">
+                <div style="font-weight: 600; font-size: 18px; margin-bottom: 18px;">Reset Your Password</div>
+                <form id="forgot-password-form" style="display: flex; flex-direction: column; gap: 16px;">
+                  <input id="forgot-password-email" type="email" placeholder="Enter your email address" required style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
+                  <button type="submit" style="background: #4F8EF7; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 16px; font-weight: 600; cursor: pointer;">Send Reset Link</button>
+                </form>
+                <div id="forgot-password-message" style="margin-top: 12px; color: #4F8EF7; font-size: 14px;"></div>
+                <div style="margin-top: 18px; text-align: center;">
+                  <button id="close-forgot-password" style="background: none; color: #4F8EF7; border: none; font-weight: 600; cursor: pointer; text-decoration: underline;">Close</button>
+                </div>
+              </div>
+            `;
+            document.body.appendChild(forgotPasswordModal);
+            document.getElementById('close-forgot-password').onclick = function() {
+              forgotPasswordModal.remove();
+              forgotPasswordModal = null;
+            };
+            document.getElementById('forgot-password-form').onsubmit = async function(e) {
+              e.preventDefault();
+              const email = document.getElementById('forgot-password-email').value;
+              const { error } = await supabase.auth.resetPasswordForEmail(email);
+              document.getElementById('forgot-password-message').textContent = error ? error.message : 'Password reset email sent! Please check your inbox.';
+            };
+          }
+        };
       }
 
       checkAuth();
