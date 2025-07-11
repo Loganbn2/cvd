@@ -54,7 +54,38 @@
     </style>
 </head>
 <body>
-    <div class="card-container">
+    <div id="auth-section" style="width: 100%; max-width: 400px; margin: 0 auto; display: none;">
+        <div style="background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.10); padding: 32px;">
+            <div style="font-weight: 600; font-size: 18px; margin-bottom: 18px;">Sign In to Your Account</div>
+            <form id="login-form" style="display: flex; flex-direction: column; gap: 16px;">
+                <input id="login-email" type="email" placeholder="Email address" required style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
+                <input id="login-password" type="password" placeholder="Password" required style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
+                <button type="submit" style="background: #4F8EF7; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 16px; font-weight: 600; cursor: pointer;">Sign In</button>
+            </form>
+            <div id="login-message" style="margin-top: 12px; color: #4F8EF7; font-size: 14px;"></div>
+            <div style="margin-top: 18px; text-align: center;">
+                <span>Don't have an account?</span>
+                <button id="show-signup" style="background: none; color: #4F8EF7; border: none; font-weight: 600; cursor: pointer; text-decoration: underline;">Create Account</button>
+            </div>
+        </div>
+    </div>
+    <div id="signup-section" style="width: 100%; max-width: 400px; margin: 0 auto; display: none;">
+        <div style="background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.10); padding: 32px;">
+            <div style="font-weight: 600; font-size: 18px; margin-bottom: 18px;">Create Your Account</div>
+            <form id="signup-form" style="display: flex; flex-direction: column; gap: 16px;">
+                <input id="signup-email" type="email" placeholder="Email address" required style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
+                <input id="signup-password" type="password" placeholder="Password" required style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
+                <button type="submit" style="background: #4F8EF7; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 16px; font-weight: 600; cursor: pointer;">Create Account</button>
+            </form>
+            <div id="signup-message" style="margin-top: 12px; color: #4F8EF7; font-size: 14px;"></div>
+            <div style="margin-top: 18px; text-align: center;">
+                <span>Already have an account?</span>
+                <button id="show-login" style="background: none; color: #4F8EF7; border: none; font-weight: 600; cursor: pointer; text-decoration: underline;">Sign In</button>
+            </div>
+        </div>
+    </div>
+    <button id="signout-btn" style="position: fixed; top: 24px; left: 24px; z-index: 1000; background: #fff; color: #4F8EF7; border: 1px solid #4F8EF7; border-radius: 8px; padding: 8px 18px; font-size: 15px; font-weight: 600; cursor: pointer; display: none;">Sign Out</button>
+    <div class="card-container" id="portal-section" style="display: none;">
         <div class="card">
             <div style="width: 100%;">
                 <div style="font-weight: 600; font-size: 16px; margin-bottom: 18px;">Vacation Club Membership Details</div>
@@ -99,12 +130,71 @@
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyZmdwdnpzc3Z5d21nemZjd3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMTc2OTksImV4cCI6MjA2Nzc5MzY5OX0.medeNAOxUHFb63IkEyBBQFvJUaf_82RTEL6TgAPPi1c';
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      async function loadUserDetails() {
+      async function checkAuth() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          document.getElementById('auth-section').style.display = 'block';
+          document.getElementById('signup-section').style.display = 'none';
+          document.getElementById('portal-section').style.display = 'none';
+          document.getElementById('signout-btn').style.display = 'none';
+        } else {
+          document.getElementById('signout-btn').style.display = 'block';
+          window.location.href = 'https://cvd-9ptc.onrender.com/';
+        }
+      }
+
+      document.getElementById('login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const msg = error ? error.message : '';
+        document.getElementById('login-message').textContent = msg;
+        if (!error) {
+          window.location.href = 'https://cvd-9ptc.onrender.com/';
+        }
+      });
+
+      document.getElementById('show-signup').onclick = function() {
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('signup-section').style.display = 'block';
+      };
+      document.getElementById('show-login').onclick = function() {
+        document.getElementById('signup-section').style.display = 'none';
+        document.getElementById('auth-section').style.display = 'block';
+      };
+
+      document.getElementById('signup-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        const { error } = await supabase.auth.signUp({ email, password });
+        const msg = error ? error.message : 'Account created! Please check your email to confirm.';
+        document.getElementById('signup-message').textContent = msg;
+      });
+
+      supabase.auth.onAuthStateChange((_event, session) => {
+        if (session) {
+          document.getElementById('signout-btn').style.display = 'block';
+          window.location.href = 'https://cvd-9ptc.onrender.com/';
+        } else {
+          document.getElementById('signout-btn').style.display = 'none';
+        }
+      });
+
+      document.getElementById('signout-btn').onclick = async function() {
+        await supabase.auth.signOut();
+        document.getElementById('signout-btn').style.display = 'none';
+        document.getElementById('auth-section').style.display = 'block';
+        document.getElementById('portal-section').style.display = 'none';
+      };
+
+      async function loadUserDetails(user) {
         // Replace 'web_users' and the filter as needed for your schema
         const { data, error } = await supabase
           .from('web_users')
           .select('*')
-          .limit(1)
+          .eq('email', user.email)
           .single();
         if (error || !data) return;
         document.getElementById('user-name').textContent = data.name || '';
@@ -114,7 +204,8 @@
         document.getElementById('user-anniversary').textContent = data.membership_anniversary || '';
         document.getElementById('user-rollover').textContent = data.points_rollover_date || '';
       }
-      loadUserDetails();
+
+      checkAuth();
     </script>
 </body>
 </html>
