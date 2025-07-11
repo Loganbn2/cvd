@@ -3,10 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Portal</title>
+    <title>My Local HTML Page</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+        body {
+            background: #f7f7f7;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            font-family: 'Montserrat', Arial, sans-serif;
+            overflow-y: auto;
+        }
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 24px;
+            width: 98vw;
+            max-width: 1800px;
+            padding: 16px 0;
+            padding-left: 10%;
+            padding-right: 10%;
+            height: 96vh;
+            max-height: none;
+            justify-items: stretch;
+            align-items: stretch;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+            width: 100%;
+            min-width: 0;
+            min-height: 0;
+            max-width: none;
+            height: 100%;
+            min-height: 300px;
+            max-height: none;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            font-size: 16px;
+            font-family: 'Montserrat', Arial, sans-serif;
+            padding: 32px;
+            box-sizing: border-box;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Member Portal</h1>
-    <p>This is the main page for members.</p>
+    <div class="card-container">
+        <div class="card">
+            <div style="width: 100%;">
+                <div style="font-weight: 600; font-size: 16px; margin-bottom: 18px;">Vacation Club Membership Details</div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-weight: 400; font-size: 15px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#128100;</span>Name</span>
+                        <span id="user-name" style="color: #222; font-weight: 500;"></span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#128231;</span>Email</span>
+                        <span id="user-email" style="color: #222; font-weight: 500;"></span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#128222;</span>Phone</span>
+                        <span id="user-phone" style="color: #222; font-weight: 500;"></span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#127915;</span>Membership Type</span>
+                        <span id="user-type" style="color: #222; font-weight: 500;"></span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#127874;</span>Membership Anniversary</span>
+                        <span id="user-anniversary" style="color: #222; font-weight: 500;"></span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#9200;</span>Points Rollover Date</span>
+                        <span id="user-rollover" style="color: #222; font-weight: 500;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="card">Tokenized Points Marketplace</div> -->
+        <!-- <div class="card">Swap STAY Tokens for Stablecoins</div> -->
+        <div class="card">Host Club Availability & Booking</div>
+        <div class="card">Harbor Shield Buy-Back Program</div>
+        <!-- <div class="card">Global Vacation Booking</div> -->
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
+    <script>
+      // Replace with your Supabase project URL and anon key
+      const SUPABASE_URL = 'https://your-project.supabase.co';
+      const SUPABASE_ANON_KEY = 'your-anon-key';
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      async function loadUserDetails() {
+        // Replace 'web_users' and the filter as needed for your schema
+        const { data, error } = await supabase
+          .from('web_users')
+          .select('*')
+          .limit(1)
+          .single();
+        if (error || !data) return;
+        document.getElementById('user-name').textContent = data.name || '';
+        document.getElementById('user-email').textContent = data.email || '';
+        document.getElementById('user-phone').textContent = data.phone || '';
+        document.getElementById('user-type').textContent = data.membership_type || '';
+        document.getElementById('user-anniversary').textContent = data.membership_anniversary || '';
+        document.getElementById('user-rollover').textContent = data.points_rollover_date || '';
+      }
+      loadUserDetails();
+    </script>
 </body>
 </html>
