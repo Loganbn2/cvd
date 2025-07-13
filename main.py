@@ -32,7 +32,7 @@ def zoho_webuser_update():
         'name': data.get('Web User Name'),
         'phone': data.get('Phone'),
         'email': data.get('Email'),
-        'membership_anniversary': data.get('Membership Anniversary Date'),
+        'membership_anniversary': data.get('Membership Anniversary'),
         'points_rollover_date': data.get('Points Rollover Date'),
         'membership_type': data.get('Membership Type'),
     }
@@ -62,7 +62,7 @@ def supabase_user_update():
         'Web User Name': data.get('name'),
         'Phone': data.get('phone'),
         'Email': data.get('email'),
-        'Membership Anniversary Date': data.get('anniversary_date'),
+        'Membership Anniversary': data.get('anniversary_date'),
         'Points Rollover Date': data.get('rollover_date'),
         'Membership Type': data.get('membership_type'),
     }
