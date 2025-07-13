@@ -33,7 +33,7 @@ def zoho_webuser_update():
         'phone': data.get('Phone'),
         'email': data.get('Email'),
         'membership_anniversary': data.get('Membership Anniversary'),
-        'points_rollover_date': data.get('Points Rollover Date'),
+        'rollover_date': data.get('Points Rollover Date'),
         'membership_type': data.get('Membership Type'),
     }
     print('Mapped for Supabase:', mapped)
