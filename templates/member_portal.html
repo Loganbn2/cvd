@@ -211,19 +211,19 @@
       };
 
       async function loadUserDetails(user) {
-        // Replace 'web_users' and the filter as needed for your schema
+        // Fetch user details from 'profiles' table using the user's ID
         const { data, error } = await supabase
-          .from('web_users')
+          .from('profiles')
           .select('*')
-          .eq('email', user.email)
+          .eq('id', user.id)
           .single();
         if (error || !data) return;
         document.getElementById('user-name').textContent = data.name || '';
-        document.getElementById('user-email').textContent = data.email || '';
+        document.getElementById('user-email').textContent = data.email || user.email || '';
         document.getElementById('user-phone').textContent = data.phone || '';
         document.getElementById('user-type').textContent = data.membership_type || '';
         document.getElementById('user-anniversary').textContent = data.membership_anniversary || '';
-        document.getElementById('user-rollover').textContent = data.points_rollover_date || '';
+        document.getElementById('user-rollover').textContent = data.rollover_date || '';
       }
 
       // Forgot Password Modal
