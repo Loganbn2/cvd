@@ -62,7 +62,7 @@ def supabase_user_update():
         'Web User Name': data.get('name'),
         'Phone': data.get('phone'),
         'Email': data.get('email'),
-        'Membership Anniversary': data.get('anniversary_date'),
+        'Membership Anniversary': data.get('membership_anniversary'),
         'Points Rollover Date': data.get('rollover_date'),
         'Membership Type': data.get('membership_type'),
     }
