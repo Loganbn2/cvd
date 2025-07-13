@@ -265,8 +265,9 @@
             document.getElementById('forgot-password-form').onsubmit = async function(e) {
               e.preventDefault();
               const email = document.getElementById('forgot-password-email').value;
-              const { error } = await supabase.auth.resetPasswordForEmail(email);
-              document.getElementById('forgot-password-message').textContent = error ? error.message : 'Password reset email sent! Please check your inbox.';
+              // Send magic link instead of password reset
+              const { error } = await supabase.auth.signInWithOtp({ email });
+              document.getElementById('forgot-password-message').textContent = error ? error.message : 'Magic link sent! Please check your inbox.';
             };
           }
         };
