@@ -32,21 +32,17 @@ def zoho_webuser_update():
         'name': data.get('Web User Name'),
         'phone': data.get('Phone'),
         'email': data.get('Email'),
-        'anniversary_date': data.get('Membership Anniversary Date'),
-        'rollover_date': data.get('Points Rollover Date'),
+        'membership_anniversary': data.get('Membership Anniversary Date'),
+        'points_rollover_date': data.get('Points Rollover Date'),
         'membership_type': data.get('Membership Type'),
     }
     print('Mapped for Supabase:', mapped)
-    # Update user in Supabase using id
+    # Only include non-None fields in update
+    update_fields = {k: v for k, v in mapped.items() if k != 'id' and v is not None}
+    if not update_fields:
+        return jsonify({'error': 'No fields to update'}), 400
     try:
-        response = supabase.table('web_users').update({
-            'name': mapped['name'],
-            'phone': mapped['phone'],
-            'email': mapped['email'],
-            'membership_anniversary': mapped['anniversary_date'],
-            'points_rollover_date': mapped['rollover_date'],
-            'membership_type': mapped['membership_type'],
-        }).eq('id', mapped['id']).execute()
+        response = supabase.table('web_users').update(update_fields).eq('id', mapped['id']).execute()
         print('Supabase update response:', response)
         return jsonify({'status': 'success', 'supabase': response.data})
     except Exception as e:
