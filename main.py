@@ -1,10 +1,15 @@
 from flask import Flask, render_template, request, jsonify
 import os
+from supabase import create_client, Client
 
 app = Flask(__name__)
 
 # Security token for Zapier webhook authentication
 ZAPIER_TOKEN = os.environ.get('ZAPIER_TOKEN', 'your-secret-token')
+
+SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://vrfgpvzssvywmgzfcwwl.supabase.co')
+SUPABASE_KEY = os.environ.get('YOUR_SUPABASE_SERVICE_ROLE_KEY')
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @app.route('/')
 def member_portal():
@@ -32,8 +37,21 @@ def zoho_webuser_update():
         'membership_type': data.get('Membership Type'),
     }
     print('Mapped for Supabase:', mapped)
-    # TODO: Update or insert user in Supabase using mapped data
-    return jsonify({'status': 'success'})
+    # Update user in Supabase using id
+    try:
+        response = supabase.table('web_users').update({
+            'name': mapped['name'],
+            'phone': mapped['phone'],
+            'email': mapped['email'],
+            'membership_anniversary': mapped['anniversary_date'],
+            'points_rollover_date': mapped['rollover_date'],
+            'membership_type': mapped['membership_type'],
+        }).eq('id', mapped['id']).execute()
+        print('Supabase update response:', response)
+        return jsonify({'status': 'success', 'supabase': response.data})
+    except Exception as e:
+        print('Supabase update error:', str(e))
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/supabase-user-update', methods=['POST'])
 def supabase_user_update():
