@@ -42,7 +42,7 @@ def zoho_webuser_update():
     if not update_fields:
         return jsonify({'error': 'No fields to update'}), 400
     try:
-        response = supabase.table('web_users').update(update_fields).eq('id', mapped['id']).execute()
+        response = supabase.table('profiles').update(update_fields).eq('id', mapped['id']).execute()
         print('Supabase update response:', response)
         return jsonify({'status': 'success', 'supabase': response.data})
     except Exception as e:
