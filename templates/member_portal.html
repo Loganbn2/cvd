@@ -50,6 +50,7 @@
             padding: 32px;
             box-sizing: border-box;
             font-weight: 600;
+            position: relative;
         }
         #auth-section, #signup-section {
             display: none;
@@ -129,6 +130,7 @@
                         <span id="user-rollover" style="color: #222; font-weight: 500;"></span>
                     </div>
                 </div>
+                <button id="edit-profile-btn" style="position: absolute; bottom: 16px; left: 16px; background: #4F8EF7; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button>
             </div>
         </div>
         <!-- <div class="card">Tokenized Points Marketplace</div> -->
@@ -275,6 +277,91 @@
               // Send magic link instead of password reset
               const { error } = await supabase.auth.signInWithOtp({ email });
               document.getElementById('forgot-password-message').textContent = error ? error.message : 'Magic link sent! Please check your inbox.';
+            };
+          }
+        };
+      }
+
+      // Edit Profile Modal
+      const editProfileBtn = document.getElementById('edit-profile-btn');
+      let editProfileModal = null;
+      if (editProfileBtn) {
+        editProfileBtn.onclick = function() {
+          if (!editProfileModal) {
+            editProfileModal = document.createElement('div');
+            editProfileModal.id = 'edit-profile-modal';
+            editProfileModal.style.position = 'fixed';
+            editProfileModal.style.top = '0';
+            editProfileModal.style.left = '0';
+            editProfileModal.style.width = '100vw';
+            editProfileModal.style.height = '100vh';
+            editProfileModal.style.background = 'rgba(0,0,0,0.2)';
+            editProfileModal.style.display = 'flex';
+            editProfileModal.style.alignItems = 'center';
+            editProfileModal.style.justifyContent = 'center';
+            editProfileModal.style.zIndex = '2000';
+            editProfileModal.innerHTML = `
+              <div style="background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.10); padding: 32px; max-width: 400px; width: 100%;">
+                <div style="font-weight: 600; font-size: 18px; margin-bottom: 18px;">Edit Profile</div>
+                <form id="edit-profile-form" style="display: flex; flex-direction: column; gap: 16px;">
+                  <input id="edit-name" type="text" placeholder="Full Name" required style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
+                  <input id="edit-email" type="email" placeholder="Email Address" required style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
+                  <input id="edit-phone" type="tel" placeholder="Phone Number" style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px;">
+                  <button type="submit" style="background: #4F8EF7; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 16px; font-weight: 600; cursor: pointer;">Save Changes</button>
+                </form>
+                <div id="edit-profile-message" style="margin-top: 12px; color: #4F8EF7; font-size: 14px;"></div>
+                <div style="margin-top: 18px; text-align: center;">
+                  <button id="close-edit-profile" style="background: none; color: #4F8EF7; border: none; font-weight: 600; cursor: pointer; text-decoration: underline;">Cancel</button>
+                </div>
+              </div>
+            `;
+            document.body.appendChild(editProfileModal);
+            
+            // Pre-fill the form with current values
+            document.getElementById('edit-name').value = document.getElementById('user-name').textContent;
+            document.getElementById('edit-email').value = document.getElementById('user-email').textContent;
+            document.getElementById('edit-phone').value = document.getElementById('user-phone').textContent;
+            
+            document.getElementById('close-edit-profile').onclick = function() {
+              editProfileModal.remove();
+              editProfileModal = null;
+            };
+            
+            document.getElementById('edit-profile-form').onsubmit = async function(e) {
+              e.preventDefault();
+              const name = document.getElementById('edit-name').value;
+              const email = document.getElementById('edit-email').value;
+              const phone = document.getElementById('edit-phone').value;
+              
+              const { data: { session } } = await supabase.auth.getSession();
+              if (!session) {
+                document.getElementById('edit-profile-message').textContent = 'Session expired. Please sign in again.';
+                return;
+              }
+              
+              const { error } = await supabase
+                .from('profiles')
+                .update({ 
+                  name: name,
+                  email: email,
+                  phone: phone
+                })
+                .eq('id', session.user.id);
+              
+              if (error) {
+                document.getElementById('edit-profile-message').textContent = error.message;
+              } else {
+                document.getElementById('edit-profile-message').textContent = 'Profile updated successfully!';
+                // Update the displayed values
+                document.getElementById('user-name').textContent = name;
+                document.getElementById('user-email').textContent = email;
+                document.getElementById('user-phone').textContent = phone;
+                // Close modal after 1.5 seconds
+                setTimeout(() => {
+                  editProfileModal.remove();
+                  editProfileModal = null;
+                }, 1500);
+              }
             };
           }
         };
