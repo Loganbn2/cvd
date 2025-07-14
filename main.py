@@ -12,7 +12,12 @@ ZAPIER_WEBHOOK_URL = os.environ.get('ZAPIER_WEBHOOK_URL')
 
 SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://vrfgpvzssvywmgzfcwwl.supabase.co')
 SUPABASE_KEY = os.environ.get('YOUR_SUPABASE_SERVICE_ROLE_KEY')
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# Only create Supabase client if key is provided (for testing without Supabase)
+if SUPABASE_KEY:
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+else:
+    supabase = None
 
 @app.route('/')
 def member_portal():
@@ -45,9 +50,13 @@ def zoho_webuser_update():
     if not update_fields:
         return jsonify({'error': 'No fields to update'}), 400
     try:
-        response = supabase.table('profiles').update(update_fields).eq('id', mapped['id']).execute()
-        print('Supabase update response:', response)
-        return jsonify({'status': 'success', 'supabase': response.data})
+        if supabase:
+            response = supabase.table('profiles').update(update_fields).eq('id', mapped['id']).execute()
+            print('Supabase update response:', response)
+            return jsonify({'status': 'success', 'supabase': response.data})
+        else:
+            print('Supabase client not configured - skipping database update')
+            return jsonify({'status': 'success', 'message': 'Supabase not configured, data processed only'})
     except Exception as e:
         print('Supabase update error:', str(e))
         return jsonify({'error': str(e)}), 500
