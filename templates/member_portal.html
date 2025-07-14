@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Local HTML Page</title>
+    <link rel="stylesheet" href="../static/icons/icons.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
         body {
@@ -63,6 +64,18 @@
             margin: 0;
             z-index: 10;
         }
+        
+        #signout-btn:hover {
+            background: #e9ecef !important;
+            color: #495057 !important;
+            border-color: #dee2e6 !important;
+        }
+        
+        #edit-profile-btn:hover {
+            background: #e9ecef !important;
+            color: #495057 !important;
+            border-color: #dee2e6 !important;
+        }
     </style>
 </head>
 <body>
@@ -99,38 +112,42 @@
             </div>
         </div>
     </div>
-    <button id="signout-btn" style="position: fixed; top: 24px; left: 24px; z-index: 1000; background: #fff; color: #4F8EF7; border: 1px solid #4F8EF7; border-radius: 8px; padding: 8px 18px; font-size: 15px; font-weight: 600; cursor: pointer; display: none;">Sign Out</button>
+    <button id="signout-btn" style="position: fixed; top: 24px; left: 24px; z-index: 1000; background: #f8f9fa; color: #6c757d; border: 1px solid #e9ecef; border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 500; cursor: pointer; display: none; transition: all 0.2s ease;">
+      <img src="../static/icons/sign-out.png" class="btn-icon icon-gray" alt="Sign out">Sign Out
+    </button>
     <div class="card-container" id="portal-section" style="display: none;">
         <div class="card">
             <div style="width: 100%;">
                 <div style="font-weight: 600; font-size: 16px; margin-bottom: 18px;">Vacation Club Membership Details</div>
                 <div style="display: flex; flex-direction: column; gap: 8px; font-weight: 400; font-size: 15px;">
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#128100;</span>Name</span>
+                        <span style="display: flex; align-items: center;"><img src="../static/icons/user.png" class="profile-icon" alt="User">Name</span>
                         <span id="user-name" style="color: #222; font-weight: 500;"></span>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#128231;</span>Email</span>
+                        <span style="display: flex; align-items: center;"><img src="../static/icons/email.png" class="profile-icon" alt="Email">Email</span>
                         <span id="user-email" style="color: #222; font-weight: 500;"></span>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#128222;</span>Phone</span>
+                        <span style="display: flex; align-items: center;"><img src="../static/icons/phone.png" class="profile-icon" alt="Phone">Phone</span>
                         <span id="user-phone" style="color: #222; font-weight: 500;"></span>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#127915;</span>Membership Type</span>
+                        <span style="display: flex; align-items: center;"><img src="../static/icons/membership.png" class="profile-icon" alt="Membership">Membership Type</span>
                         <span id="user-type" style="color: #222; font-weight: 500;"></span>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#127874;</span>Membership Anniversary</span>
+                        <span style="display: flex; align-items: center;"><img src="../static/icons/anniversary.png" class="profile-icon" alt="Anniversary">Membership Anniversary</span>
                         <span id="user-anniversary" style="color: #222; font-weight: 500;"></span>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <span style="display: flex; align-items: center;"><span style="margin-right: 10px; color: #4F8EF7; font-size: 18px;">&#9200;</span>Points Rollover Date</span>
+                        <span style="display: flex; align-items: center;"><img src="../static/icons/rollover.png" class="profile-icon" alt="Rollover">Points Rollover Date</span>
                         <span id="user-rollover" style="color: #222; font-weight: 500;"></span>
                     </div>
                 </div>
-                <button id="edit-profile-btn" style="position: absolute; bottom: 16px; left: 16px; background: #4F8EF7; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button>
+                <button id="edit-profile-btn" style="position: absolute; bottom: 16px; left: 16px; background: #f8f9fa; color: #6c757d; border: 1px solid #e9ecef; border-radius: 6px; padding: 4px 8px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+                  <img src="../static/icons/edit.png" class="btn-icon-small icon-gray" alt="Edit">Edit
+                </button>
             </div>
         </div>
         <!-- <div class="card">Tokenized Points Marketplace</div> -->
@@ -139,6 +156,7 @@
         <div class="card">Harbor Shield Buy-Back Program</div>
         <!-- <div class="card">Global Vacation Booking</div> -->
     </div>
+    <script src="../static/icons/icon-library.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
     <script>
       // Replace with your Supabase project URL and anon key

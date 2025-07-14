@@ -1,0 +1,61 @@
+/* Icon Library CSS */
+
+.icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
+.icon-small {
+    width: 12px;
+    height: 12px;
+}
+
+.icon-medium {
+    width: 20px;
+    height: 20px;
+}
+
+.icon-large {
+    width: 24px;
+    height: 24px;
+}
+
+/* Button icon styles */
+.btn-icon {
+    margin-right: 6px;
+    width: 14px;
+    height: 14px;
+}
+
+.btn-icon-small {
+    margin-right: 4px;
+    width: 12px;
+    height: 12px;
+}
+
+/* User profile icons */
+.profile-icon {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    filter: brightness(0) saturate(100%) invert(0%);
+}
+
+/* Utility classes for icon styling */
+.icon-gray {
+    filter: brightness(0) saturate(100%) invert(0%);
+}
+
+.icon-blue {
+    filter: brightness(0) saturate(100%) invert(0%);
+}
+
+.icon-white {
+    filter: brightness(0) saturate(100%) invert(100%);
+}
+
+.icon-dark {
+    filter: brightness(0) saturate(100%) invert(0%);
+}
