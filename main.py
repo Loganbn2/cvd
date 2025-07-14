@@ -77,9 +77,12 @@ def supabase_user_update():
         record = data  # Fallback if data is sent directly
     
     # Map Supabase fields to Zoho fields
+    # Use 'name' as primary, fallback to 'User Name' if 'name' is not available
+    user_name = record.get('name') or record.get('User Name')
+    
     mapped = {
         'ID String': record.get('id'),
-        'Web User Name': record.get('name'),
+        'Web User Name': user_name,
         'Phone': record.get('phone'),
         'Email': record.get('email'),
         'Membership Anniversary': record.get('membership_anniversary'),
