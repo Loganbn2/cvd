@@ -78,7 +78,8 @@ def supabase_user_update():
     
     # Map Supabase fields to Zoho fields
     # Use 'name' as primary, fallback to 'User Name' if 'name' is not available
-    user_name = record.get('name') or record.get('User Name')
+    # If neither exists, use default 'User Name' to ensure Zoho integration works
+    user_name = record.get('name') or record.get('User Name') or 'User Name'
     
     mapped = {
         'ID String': record.get('id'),
