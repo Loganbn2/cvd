@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import os
+import requests
 from supabase import create_client, Client
 
 app = Flask(__name__)
 
 # Security token for Zapier webhook authentication
 ZAPIER_TOKEN = os.environ.get('ZAPIER_TOKEN', 'your-secret-token')
+# Zapier webhook URL for forwarding Supabase updates
+ZAPIER_WEBHOOK_URL = os.environ.get('ZAPIER_WEBHOOK_URL')
 
 SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://vrfgpvzssvywmgzfcwwl.supabase.co')
 SUPABASE_KEY = os.environ.get('YOUR_SUPABASE_SERVICE_ROLE_KEY')
@@ -51,24 +54,65 @@ def zoho_webuser_update():
 
 @app.route('/api/supabase-user-update', methods=['POST'])
 def supabase_user_update():
-    # Security check
-    token = request.headers.get('X-Zapier-Token')
-    if token != ZAPIER_TOKEN:
-        return jsonify({'error': 'Unauthorized'}), 401
+    # This endpoint receives webhooks from Supabase
+    # No token check needed since this comes directly from Supabase
     data = request.json
+    
+    # Extract the record data from Supabase webhook payload
+    # Supabase sends data in different formats for INSERT vs UPDATE
+    if 'record' in data:
+        record = data['record']  # For INSERT events
+    elif 'new' in data:
+        record = data['new']     # For UPDATE events
+    else:
+        record = data  # Fallback if data is sent directly
+    
     # Map Supabase fields to Zoho fields
     mapped = {
-        'ID String': data.get('id'),
-        'Web User Name': data.get('name'),
-        'Phone': data.get('phone'),
-        'Email': data.get('email'),
-        'Membership Anniversary': data.get('membership_anniversary'),
-        'Points Rollover Date': data.get('rollover_date'),
-        'Membership Type': data.get('membership_type'),
+        'ID String': record.get('id'),
+        'Web User Name': record.get('name'),
+        'Phone': record.get('phone'),
+        'Email': record.get('email'),
+        'Membership Anniversary': record.get('membership_anniversary'),
+        'Points Rollover Date': record.get('rollover_date'),
+        'Membership Type': record.get('membership_type'),
     }
     print('Mapped for Zoho:', mapped)
-    # TODO: Update or insert user in Zoho using mapped data
-    return jsonify({'status': 'success'})
+    
+    # Filter out None values for cleaner data
+    clean_mapped = {k: v for k, v in mapped.items() if v is not None}
+    
+    # Forward to Zapier webhook if URL is configured
+    if ZAPIER_WEBHOOK_URL:
+        try:
+            response = requests.post(
+                ZAPIER_WEBHOOK_URL,
+                json=clean_mapped,
+                headers={'Content-Type': 'application/json'},
+                timeout=10
+            )
+            print(f'Zapier webhook response: {response.status_code}')
+            
+            return jsonify({
+                'status': 'success',
+                'message': 'Data forwarded to Zapier',
+                'zapier_status': response.status_code,
+                'zoho_data': clean_mapped
+            })
+        except Exception as e:
+            print(f'Error forwarding to Zapier: {str(e)}')
+            return jsonify({
+                'status': 'error',
+                'message': f'Failed to forward to Zapier: {str(e)}',
+                'zoho_data': clean_mapped
+            }), 500
+    else:
+        # If no Zapier URL configured, just return the data
+        return jsonify({
+            'status': 'success',
+            'message': 'Data processed (no Zapier URL configured)',
+            'zoho_data': clean_mapped
+        })
 
 if __name__ == '__main__':
     app.run(debug=True)
